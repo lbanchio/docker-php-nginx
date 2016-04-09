@@ -32,7 +32,10 @@ RUN mkdir -p                                                            /var/www
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.0/fpm/php.ini
 RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.0/fpm/php.ini
 RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g"                 /etc/php/7.0/fpm/php-fpm.conf
+##Updated for PHP 7.0
 RUN sed -i "s/pid =.*/pid = \/var\/run\/php-fpm.pid/"                   /etc/php/7.0/fpm/php-fpm.conf
+RUN sed -i "s/listen =.*sock/listen = \/var\/run\/php-fpm.sock/"        /etc/php/7.0/fpm/pool.d/www.conf
+##
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.0/cli/php.ini
 RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.0/cli/php.ini
 RUN phpenmod mcrypt
