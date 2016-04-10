@@ -14,7 +14,7 @@ RUN locale-gen en_US.UTF-8 && \
     add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get install -y --force-yes nginx \
-    php7.0 php-fpm php-cli php-mysql php-redis php-mcrypt \
+    php7.0 php7.0-zip php-fpm php-cli php-mysql php-redis php-mcrypt \
     php-pspell aspell-es php-imagick php-xdebug \
     php-sqlite3 mediainfo git \
     php-curl php-gd php-intl && \
@@ -40,6 +40,7 @@ RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php
 RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.0/cli/php.ini
 RUN phpenmod mcrypt
 RUN phpenmod xdebug
+RUN phpenmod zip
 
 # Add nginx service
 RUN mkdir                                                               /etc/service/nginx
