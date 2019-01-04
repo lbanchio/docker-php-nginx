@@ -40,7 +40,6 @@ RUN locale-gen en_US.UTF-8 && \
 # Configure nginx
 RUN echo "daemon off;" >>                                               /etc/nginx/nginx.conf
 RUN sed -i "s/sendfile on/sendfile off/"                                /etc/nginx/nginx.conf
-RUN sed -i "s/user www-data/user 1000/"                                /etc/nginx/nginx.conf
 RUN mkdir -p                                                            /var/www
 RUN mkdir -p                                                            /run/php
 RUN mkdir -m 777                                                        /tmp/php
@@ -54,10 +53,6 @@ RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g"                 /etc/php
 RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.1/cli/php.ini
 RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.1/cli/php.ini
 RUN sed -i "s/;clear_env =.*/clear_env = no/"                           /etc/php/7.1/fpm/pool.d/www.conf      /etc/php/7.1/cli/php.ini
-RUN sed -i "s/user = www-data/user = 1000/"                             /etc/php/7.1/fpm/pool.d/www.conf
-RUN sed -i "s/group = www-data/group = 1000/"                           /etc/php/7.1/fpm/pool.d/www.conf
-RUN sed -i "s/listener.owner = www-data/listener.owner = 1000/"                             /etc/php/7.1/fpm/pool.d/www.conf
-RUN sed -i "s/listener.group = www-data/listener.group = 1000/"                           /etc/php/7.1/fpm/pool.d/www.conf
 
 RUN echo "xdebug.idekey=phpstorm" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
 RUN echo "xdebug.remote_enable=1" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
