@@ -14,23 +14,22 @@ RUN locale-gen en_US.UTF-8 && \
     add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get install -y --force-yes nginx \
-    php7.1-fpm \
-    php7.1-zip \
-    php7.1-mysql \
-    php7.1-redis \
-    php7.1-mcrypt \
-    php7.1-xml \
-    php7.1-xdebug \
-    php7.1-common \
-    php7.1-sqlite \
-    php7.1-curl \
-    php7.1-zmq \
-    php7.1-gd \
-    php7.1-imagick \
-    php7.1-soap \
-    php7.1-mbstring \
-    php7.1-intl \
-    php7.1-mongodb \
+    php7.3-fpm \
+    php7.3-zip \
+    php7.3-mysql \
+    php7.3-redis \
+    php7.3-xml \
+    php7.3-xdebug \
+    php7.3-common \
+    php7.3-sqlite \
+    php7.3-curl \
+    php7.3-zmq \
+    php7.3-gd \
+    php7.3-imagick \
+    php7.3-soap \
+    php7.3-mbstring \
+    php7.3-intl \
+    php7.3-mongodb \
     git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \
@@ -44,34 +43,33 @@ RUN groupadd -g 1000 user && useradd --no-log-init -u 1000 -b /var/www -M -g use
 RUN echo "daemon off;" >>                                               /etc/nginx/nginx.conf
 RUN sed -i "s/sendfile on/sendfile off/"                                /etc/nginx/nginx.conf
 RUN sed -i "s/user www-data/user user/"                                 /etc/nginx/nginx.conf
-RUN sed -i "s/user = www-data/user = user/"                             /etc/php/7.1/fpm/pool.d/www.conf
-RUN sed -i "s/group = www-data/group = user/"                           /etc/php/7.1/fpm/pool.d/www.conf
-RUN sed -i "s/listener.owner = www-data/listener.owner = user/"         /etc/php/7.1/fpm/pool.d/www.conf
-RUN sed -i "s/listener.group = www-data/listener.group = user/"         /etc/php/7.1/fpm/pool.d/www.conf
+RUN sed -i "s/user = www-data/user = user/"                             /etc/php/7.3/fpm/pool.d/www.conf
+RUN sed -i "s/group = www-data/group = user/"                           /etc/php/7.3/fpm/pool.d/www.conf
+RUN sed -i "s/listener.owner = www-data/listener.owner = user/"         /etc/php/7.3/fpm/pool.d/www.conf
+RUN sed -i "s/listener.group = www-data/listener.group = user/"         /etc/php/7.3/fpm/pool.d/www.conf
 RUN mkdir -p                                                            /var/www
 RUN mkdir -p                                                            /run/php
 RUN mkdir -m 777                                                        /tmp/php
 
 # Configure PHP
-RUN sed -i "s/;session.save_path =.*/session.save_path = \/tmp\/php/"   /etc/php/7.1/fpm/php.ini
-RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.1/fpm/php.ini
-RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.1/fpm/php.ini
-RUN sed -i "s/variables_order =.*/variables_order = \"EGPCS\"/"         /etc/php/7.1/fpm/php.ini
-RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g"                 /etc/php/7.1/fpm/php-fpm.conf
-RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.1/cli/php.ini
-RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.1/cli/php.ini
-RUN sed -i "s/;clear_env =.*/clear_env = no/"                           /etc/php/7.1/fpm/pool.d/www.conf      /etc/php/7.1/cli/php.ini
+RUN sed -i "s/;session.save_path =.*/session.save_path = \/tmp\/php/"   /etc/php/7.3/fpm/php.ini
+RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.3/fpm/php.ini
+RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.3/fpm/php.ini
+RUN sed -i "s/variables_order =.*/variables_order = \"EGPCS\"/"         /etc/php/7.3/fpm/php.ini
+RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g"                 /etc/php/7.3/fpm/php-fpm.conf
+RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.3/cli/php.ini
+RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.3/cli/php.ini
+RUN sed -i "s/;clear_env =.*/clear_env = no/"                           /etc/php/7.3/fpm/pool.d/www.conf      /etc/php/7.3/cli/php.ini
 
-RUN echo "xdebug.idekey=phpstorm" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
-RUN echo "xdebug.remote_enable=1" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
-RUN echo "xdebug.remote_port=9000" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
-RUN echo "xdebug.remote_connect_back=1" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
-RUN echo "xdebug.max_nesting_level=600" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
-RUN echo "xdebug.scream=0" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
-RUN echo "xdebug.cli_color=1" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
-RUN echo "xdebug.show_local_vars=1" >> /etc/php/7.1/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.idekey=phpstorm" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_enable=1" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_port=9000" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_connect_back=1" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.max_nesting_level=600" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.scream=0" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.cli_color=1" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.show_local_vars=1" >> /etc/php/7.3/fpm/conf.d/20-xdebug.ini
 
-RUN phpenmod mcrypt
 RUN phpenmod xdebug
 
 # Add nginx service
