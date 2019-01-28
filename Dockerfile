@@ -30,6 +30,7 @@ RUN locale-gen en_US.UTF-8 && \
     php7.3-mbstring \
     php7.3-intl \
     php7.3-mongodb \
+    unzip \
     git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \
