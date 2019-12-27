@@ -1,4 +1,4 @@
-FROM phusion/baseimage:0.9.18
+FROM phusion/baseimage
 MAINTAINER Harsh Vakharia <harshjv@gmail.com>
 MAINTAINER Leandro Banchio <lbanchio@gmail.com>
 
@@ -15,36 +15,65 @@ RUN locale-gen en_US.UTF-8 && \
     apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y --force-yes nginx \
-    php7.1-zip php7.1-fpm php7.1-mysql php7.1-redis php7.1-mcrypt \
-    php7.1-imagick php7.1-xdebug php7.1-apcu php7.1-xml \
-    php7.1-sqlite3 php-mbstring git \
-    php7.1-curl php7.1-gd php7.1-intl && \
+    php7.4-fpm \
+    php7.4-zip \
+    php7.4-mysql \
+    php7.4-redis \
+    php7.4-xml \
+    php7.4-xdebug \
+    php7.4-common \
+    php7.4-sqlite \
+    php7.4-curl \
+    php7.4-zmq \
+    php7.4-gd \
+    php7.4-imagick \
+    php7.4-soap \
+    php7.4-mbstring \
+    php7.4-intl \
+    php7.4-bcmath \
+    php7.4-mongodb \
+    unzip \
+    git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \
            /tmp/* \
            /var/tmp/*
 
+# Configure users
+RUN groupadd -g 1000 user && useradd --no-log-init -u 1000 -b /var/www -M -g user user
+
 # Configure nginx
 RUN echo "daemon off;" >>                                               /etc/nginx/nginx.conf
 RUN sed -i "s/sendfile on/sendfile off/"                                /etc/nginx/nginx.conf
+RUN sed -i "s/user www-data/user user/"                                 /etc/nginx/nginx.conf
+RUN sed -i "s/user = www-data/user = user/"                             /etc/php/7.4/fpm/pool.d/www.conf
+RUN sed -i "s/group = www-data/group = user/"                           /etc/php/7.4/fpm/pool.d/www.conf
+RUN sed -i "s/listener.owner = www-data/listener.owner = user/"         /etc/php/7.4/fpm/pool.d/www.conf
+RUN sed -i "s/listener.group = www-data/listener.group = user/"         /etc/php/7.4/fpm/pool.d/www.conf
 RUN mkdir -p                                                            /var/www
+RUN mkdir -p                                                            /run/php
+RUN mkdir -m 777                                                        /tmp/php
 
 # Configure PHP
-RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.1/fpm/php.ini
-RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g"                 /etc/php/7.1/fpm/php-fpm.conf
-##For dev enviroment
-RUN sed -i 's/display_errors =.*/display_errors = On/g'                 /etc/php/7.1/fpm/php.ini
-RUN sed -i 's/display_startup_errors =.*/display_startup_errors = On/g' /etc/php/7.1/fpm/php.ini
-RUN sed -i 's/upload_max_filesize =.*/upload_max_filesize = 64M/g'      /etc/php/7.1/fpm/php.ini
-##Updated for PHP 7.0
-RUN sed -i "s/pid =.*/pid = \/var\/run\/php-fpm.pid/"                   /etc/php/7.1/fpm/php-fpm.conf
-RUN sed -i "s/listen =.*sock/listen = \/var\/run\/php-fpm.sock/"        /etc/php/7.1/fpm/pool.d/www.conf
-##
-RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.1/cli/php.ini
-RUN sed -i "s/date.timezone =.*/date.timezone = America\/Argentina\/Cordoba/g" /etc/php/7.1/fpm/php.ini
-RUN phpenmod mcrypt
+RUN sed -i "s/;session.save_path =.*/session.save_path = \/tmp\/php/"   /etc/php/7.4/fpm/php.ini
+RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.4/fpm/php.ini
+RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.4/fpm/php.ini
+RUN sed -i "s/variables_order =.*/variables_order = \"EGPCS\"/"         /etc/php/7.4/fpm/php.ini
+RUN sed -i -e "s/;daemonize\s*=\s*yes/daemonize = no/g"                 /etc/php/7.4/fpm/php-fpm.conf
+RUN sed -i "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/"                  /etc/php/7.4/cli/php.ini
+RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php/7.4/cli/php.ini
+RUN sed -i "s/;clear_env =.*/clear_env = no/"                           /etc/php/7.4/fpm/pool.d/www.conf      /etc/php/7.4/cli/php.ini
+
+RUN echo "xdebug.idekey=phpstorm" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_enable=1" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_port=9000" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.remote_connect_back=1" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.max_nesting_level=600" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.scream=0" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.cli_color=1" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.show_local_vars=1" >> /etc/php/7.4/fpm/conf.d/20-xdebug.ini
+
 RUN phpenmod xdebug
-RUN phpenmod zip
 
 # Add nginx service
 RUN mkdir                                                               /etc/service/nginx
@@ -56,6 +85,7 @@ RUN mkdir                                                               /etc/ser
 ADD build/php/run.sh                                                    /etc/service/phpfpm/run
 RUN chmod +x                                                            /etc/service/phpfpm/run
 
+RUN chmod 777                                                           /var/lib/php -R
 # Add nginx
 VOLUME ["/var/www", "/etc/nginx/sites-available", "/etc/nginx/sites-enabled"]
 
