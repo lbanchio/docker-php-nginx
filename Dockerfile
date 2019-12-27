@@ -13,6 +13,7 @@ RUN locale-gen en_US.UTF-8 && \
     export LANG=en_US.UTF-8 && \
     add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
+    apt-get upgrade -y && \
     apt-get install -y --force-yes nginx \
     php7.4-fpm \
     php7.4-zip \
