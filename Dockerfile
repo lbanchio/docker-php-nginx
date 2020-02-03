@@ -8,6 +8,7 @@ RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 CMD ["/sbin/my_init"]
 ENV DEBIAN_FRONTEND noninteractive
 
+RUN echo 'DPkg::options { "--force-confdef"; };' >> /etc/apt/apt.conf
 # Update software list, install php-nginx & clear cache
 RUN locale-gen en_US.UTF-8 && \
     export LANG=en_US.UTF-8 && \
