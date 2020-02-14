@@ -29,6 +29,7 @@ RUN locale-gen en_US.UTF-8 && \
     php7.4-gd \
     php7.4-imagick \
     php7.4-soap \
+    php7.4-apcu \
     php7.4-mbstring \
     php7.4-intl \
     php7.4-bcmath \
