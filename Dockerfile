@@ -19,7 +19,7 @@ RUN locale-gen en_US.UTF-8 && \
     apt-get install -y --force-yes nginx \
     php8.0-fpm \
     php8.0-zip \
-    php8-mysql \
+    php8.0-mysql \
     php8.0-redis \
     php8.0-xml \
     php8.0-xdebug \
