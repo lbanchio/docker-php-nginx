@@ -68,6 +68,7 @@ RUN sed -i "s/;date.timezone =.*/date.timezone = Asia\/Kolkata/"        /etc/php
 RUN sed -i "s/;clear_env =.*/clear_env = no/"                           /etc/php/8.0/fpm/pool.d/www.conf      /etc/php/8.0/cli/php.ini
 
 RUN echo "xdebug.idekey=phpstorm" >> /etc/php/8.0/fpm/conf.d/20-xdebug.ini
+RUN echo "xdebug.mode=debug" >> /etc/php/8.0/fpm/conf.d/20-xdebug.ini
 RUN echo "xdebug.remote_enable=1" >> /etc/php/8.0/fpm/conf.d/20-xdebug.ini
 RUN echo "xdebug.remote_port=9000" >> /etc/php/8.0/fpm/conf.d/20-xdebug.ini
 RUN echo "xdebug.remote_connect_back=1" >> /etc/php/8.0/fpm/conf.d/20-xdebug.ini
